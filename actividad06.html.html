@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fundamentos de Álgebra — Calculadora (con portada)</title>
+<style>
+/* ==================== Diseño base (sin imágenes) ==================== */
+:root{
+  /* paleta */
+  --bg-1: #0f172a;          /* slate-900 */
+  --bg-2: #111827;          /* gray-900 */
+  --panel: #0b1022;         /* azul muy oscuro */
+  --card: #0f1a33;          /* panel intermedio */
+  --text: #e5e7eb;          /* gris 200 */
+  --muted: #94a3b8;         /* slate 400 */
+  --ring: #60a5fa;          /* azul */
+  --ok: #10b981;            /* verde */
+  --warn: #f59e0b;          /* oro */
+  --danger:#ef4444;         /* rojo */
+  /* acentos gradiente */
+  --grad-a: #3b82f6;        /* azul */
+  --grad-b: #8b5cf6;        /* violeta */
+  --grad-c: #06b6d4;        /* cian */
+  --border: rgba(148,163,184,.25);
+  --shadow: 0 10px 25px rgba(2,6,23,.35);
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+/* Reset */
+*,*::before,*::after{ box-sizing: border-box; }
+html,body{ height:100%; }
+body{
+  margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(59,130,246,.25), transparent 50%),
+    radial-gradient(900px 500px at 120% 10%, rgba(139,92,246,.18), transparent 40%),
+    linear-gradient(180deg, var(--bg-2), var(--bg-1) 35%, #0a0f21 100%);
+}
+
+/* Utilidades */
+.container{ max-width:1100px; margin:0 auto; padding:24px; }
+h1,h2,h3{ margin:0; }
+button{ font:inherit; }
+
+/* ==================== PORTADA ==================== */
+.portada{
+  position:relative; overflow:hidden; border-radius:var(--radius);
+  border:1px solid var(--border); background:rgba(11,16,34,.65);
+  box-shadow: var(--shadow); padding:28px; margin:24px 0;
+}
+.portada::before, .portada::after{
+  content:""; position:absolute; inset:-2px; z-index:-1; border-radius:inherit;
+  background: conic-gradient(from 180deg at 50% 50%, var(--grad-a), var(--grad-b), var(--grad-c), var(--grad-a));
+  filter: blur(24px); opacity:.18; animation: spin 18s linear infinite;
+}
+.portada::after{ animation-direction: reverse; opacity:.12; filter: blur(36px); }
+@keyframes spin{ to{ transform: rotate(360deg);} }
+
+.portada-head{
+  display:flex; gap:18px; align-items:center; flex-wrap:wrap; justify-content:space-between;
+  padding-bottom:14px; border-bottom:1px dashed var(--border);
+}
+.badge{
+  background: linear-gradient(90deg, var(--grad-a), var(--grad-b));
+  color:white; padding:8px 14px; border-radius:999px; font-weight:700; letter-spacing:.2px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
+}
+.portada h1{
+  font-weight:900; font-size:clamp(1.5rem, 2.5vw, 2.1rem);
+  background: linear-gradient(90deg, #fff, #c7d2fe 40%, #a5f3fc 80%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.portada-grid{
+  display:grid; grid-template-columns: repeat(2, minmax(0,1fr));
+  gap:14px; margin-top:16px;
+}
+.item{
+  background: linear-gradient(180deg, rgba(22,31,63,.6), rgba(14,20,43,.6));
+  border:1px solid var(--border); border-radius: var(--radius-sm);
+  padding:12px 14px;
+}
+.item label{ display:block; color:var(--muted); font-size:.85rem; margin-bottom:4px; letter-spacing:.2px; }
+.item .value{ font-weight:700; }
+
+.sticky-note{
+  margin-top:12px; font-size:.9rem; color:#cdd5e1; opacity:.9;
+}
+
+/* ==================== CALCULADORA ==================== */
+.section{
+  border:1px solid var(--border); border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(12,18,40,.85), rgba(10,15,33,.9));
+  padding:22px; box-shadow: var(--shadow); margin:24px 0;
+}
+.section h2{
+  font-size:1.15rem; letter-spacing:.2px; font-weight:800; margin-bottom:12px;
+  background: linear-gradient(90deg, #e2e8f0, #c7d2fe 50%, #a5f3fc); -webkit-background-clip:text; color:transparent;
+}
+.grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media (max-width: 880px){ .grid-2{ grid-template-columns: 1fr; } }
+
+.card{
+  border:1px solid var(--border); border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(19,29,63,.6), rgba(13,20,46,.7));
+  padding:16px;
+}
+.input-group{ margin-bottom:12px; }
+.input-group label{ display:block; color:var(--muted); font-size:.9rem; margin-bottom:6px; }
+
+textarea{
+  width:100%; min-height:110px; resize:vertical; padding:12px 12px;
+  border-radius:12px; border:1px solid var(--border);
+  background: rgba(7,10,22,.75); color:var(--text);
+  outline:none; transition: box-shadow .2s, border-color .2s, transform .05s;
+  box-shadow: inset 0 0 0 1px rgba(96,165,250,.05);
+}
+textarea:focus{
+  border-color: rgba(96,165,250,.6);
+  box-shadow: 0 0 0 3px rgba(96,165,250,.18), inset 0 0 0 1px rgba(96,165,250,.2);
+}
+textarea::placeholder{ color:#7c8aa2; font-style:italic; }
+
+/* Botones */
+.row{ display:flex; gap:10px; flex-wrap:wrap; }
+.btn{
+  appearance:none; border:none; cursor:pointer; user-select:none; border-radius:12px;
+  font-weight:800; letter-spacing:.2px; padding:10px 14px;
+  transition: transform .06s ease, filter .2s ease, box-shadow .2s ease;
+  color:white; position:relative; isolation:isolate;
+}
+.btn:active{ transform: translateY(1px) scale(.995); }
+.btn::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; opacity:.7;
+  background: radial-gradient(120% 120% at 10% 10%, rgba(255,255,255,.18), transparent 40%);
+  filter: blur(6px);
+}
+.btn-primary{ background: linear-gradient(90deg, var(--grad-a), var(--grad-b)); }
+.btn-alt{ background: linear-gradient(90deg, var(--grad-c), var(--grad-b)); }
+.btn-ok{ background: linear-gradient(90deg, #16a34a, #10b981); }
+.btn-warn{ background: linear-gradient(90deg, #f59e0b, #f97316); }
+.btn-danger{ background: linear-gradient(90deg, #ef4444, #f43f5e); }
+.btn-ghost{ background: linear-gradient(180deg, rgba(148,163,184,.15), rgba(148,163,184,.08)); color:#e2e8f0; border:1px solid var(--border); }
+
+.result{
+  margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);
+}
+.out{
+  background: rgba(2,6,23,.6); border:1px solid var(--border); border-radius:12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding:10px 12px; min-height:56px; white-space: pre-wrap;
+}
+
+/* Info/Métricas */
+.info-grid{
+  display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.info{
+  background: linear-gradient(180deg, rgba(22,31,63,.55), rgba(16,24,52,.6));
+  border:1px solid var(--border); border-radius:12px; padding:14px; text-align:center;
+}
+.info .num{ font-weight:900; font-size:1.6rem; background:linear-gradient(90deg,#fff,#bfdbfe); -webkit-background-clip:text; color:transparent; }
+.info .lbl{ color:var(--muted); font-size:.85rem; }
+
+/* Historial */
+.hist{ max-height:280px; overflow:auto; border:1px solid var(--border); border-radius:12px; padding:12px; background: rgba(6,9,19,.6); }
+.hist .empty{ color:var(--muted); text-align:center; font-style:italic; }
+.hist .rowi{ border-bottom:1px dashed var(--border); padding:8px 0; }
+.hist .rowi:last-child{ border-bottom:none; }
+.hist .hdr{ display:flex; justify-content:space-between; gap:10px; font-weight:800; }
+.hist .meta{ color:var(--muted); font-size:.9rem; }
+
+/* Footer */
+footer{ text-align:center; color:#cbd5e1; opacity:.9; padding:22px 0 32px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ==================== PORTADA (fija) ==================== -->
+  <section class="portada" id="portada">
+    <div class="portada-head">
+      <span class="badge">Fundamentos de Álgebra</span>
+      <h1>Tecnológico de Software — Actividad · Calculadora de Expresiones</h1>
+    </div>
+
+    <div class="portada-grid" id="datos-portada">
+      <div class="item"><label>Institución</label><div class="value" id="inst">Tecnológico de Software</div></div>
+      <div class="item"><label>Materia</label><div class="value" id="materia">Fundamentos de Álgebra</div></div>
+      <div class="item"><label>Docente</label><div class="value" id="docente">Javier Pedrozo</div></div>
+      <div class="item"><label>Alumno</label><div class="value" id="alumno">David Morales Guerrero</div></div>
+      <div class="item"><label>Grupo</label><div class="value" id="grupo">1A</div></div>
+      <div class="item"><label>Fecha</label><div class="value" id="fecha"></div></div>
+    </div>
+
+    <p class="sticky-note">Estos datos quedan guardados localmente (LocalStorage) y se mostrarán siempre en la portada.</p>
+  </section>
+
+  <!-- ==================== CALCULADORA ==================== -->
+  <section class="section">
+    <h2>Conversor — Lenguaje natural ⇄ Expresión algebraica</h2>
+    <div class="grid-2">
+
+      <!-- Natural -> Algebraico -->
+      <article class="card">
+        <div class="input-group">
+          <label for="natural-input">Lenguaje natural</label>
+          <textarea id="natural-input" placeholder="Ej.: La suma de a y b"></textarea>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary" id="convert-to-algebraic-btn">Convertir a algebraico</button>
+          <button class="btn btn-ok" id="natural-satisfactory-btn">Satisfactorio</button>
+          <button class="btn btn-warn" id="natural-improve-btn">Para mejorar</button>
+          <button class="btn btn-ghost" id="natural-add-pattern-btn">Agregar patrón</button>
+        </div>
+        <div class="result" id="natural-result" style="display:none;">
+          <div class="out" id="natural-output"></div>
+        </div>
+      </article>
+
+      <!-- Algebraico -> Natural -->
+      <article class="card">
+        <div class="input-group">
+          <label for="algebraic-input">Expresión algebraica</label>
+          <textarea id="algebraic-input" placeholder="Ej.: a^2 + b^2"></textarea>
+        </div>
+        <div class="row">
+          <button class="btn btn-alt" id="convert-to-natural-btn">Convertir a natural</button>
+          <button class="btn btn-ok" id="algebraic-satisfactory-btn">Satisfactorio</button>
+          <button class="btn btn-warn" id="algebraic-improve-btn">Para mejorar</button>
+          <button class="btn btn-ghost" id="algebraic-add-pattern-btn">Agregar patrón</button>
+        </div>
+        <div class="result" id="algebraic-result" style="display:none;">
+          <div class="out" id="algebraic-output"></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Carga de JSON -->
+  <section class="section">
+    <h2>Base de datos de patrones</h2>
+    <div class="row" style="flex-wrap:wrap">
+      <label class="btn btn-ghost" for="json-file-input">Elegir archivo JSON</label>
+      <input type="file" id="json-file-input" accept=".json" hidden>
+      <span id="file-name" class="meta">Ningún archivo seleccionado</span>
+      <button class="btn btn-primary" id="load-json-btn" disabled>Cargar patrones</button>
+      <button class="btn btn-ghost" id="reset-json-btn">Usar patrones por defecto</button>
+    </div>
+  </section>
+
+  <!-- Info -->
+  <section class="section">
+    <h2>Información del sistema</h2>
+    <div class="info-grid">
+      <div class="info"><div class="num" id="m-pat">0</div><div class="lbl">Patrones cargados</div></div>
+      <div class="info"><div class="num" id="m-size">0 KB</div><div class="lbl">Tamaño JSON</div></div>
+      <div class="info"><div class="num" id="m-total">0</div><div class="lbl">Conversiones</div></div>
+      <div class="info"><div class="num" id="m-sat">0</div><div class="lbl">Satisfactorias</div></div>
+      <div class="info"><div class="num" id="m-last">—</div><div class="lbl">Última actualización</div></div>
+      <div class="info"><div class="num" id="m-avg">0</div><div class="lbl">Palabras/promedio patrón</div></div>
+    </div>
+  </section>
+
+  <!-- Historial -->
+  <section class="section">
+    <h2>Historial</h2>
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn btn-danger" id="clear-history-btn">Limpiar historial</button>
+      <button class="btn btn-warn" id="export-history-btn">Exportar .json</button>
+    </div>
+    <div class="hist" id="history-list"><div class="empty">Sin conversiones todavía</div></div>
+  </section>
+
+  <footer>
+    Tecnológico de Software — Fundamentos de Álgebra · Alumno: <strong>David Morales Guerrero</strong> · Grupo: <strong>1A</strong>
+  </footer>
+</div>
+<script>
+/* ==================== PORTADA: datos fijos y persistencia ==================== */
+const datosAlumno = {
+  institucion: "Tecnológico de Software",
+  materia: "Fundamentos de Álgebra",
+  docente: "Javier Pedrozo",
+  alumno: "David Morales Guerrero",
+  grupo: "1A"
+};
+(function persist(){
+  try{ localStorage.setItem("algebra_portada", JSON.stringify(datosAlumno)); }catch(_){}
+})();
+function loadCover(){
+  const saved = JSON.parse(localStorage.getItem("algebra_portada")||"{}");
+  const d = Object.assign({}, datosAlumno, saved);
+  const set = (id,val)=>{ const el=document.getElementById(id); if(el) el.textContent = val||"-"; };
+  set("inst", d.institucion); set("materia", d.materia); set("docente", d.docente);
+  set("alumno", d.alumno); set("grupo", d.grupo);
+  set("fecha", new Date().toLocaleDateString("es-MX",{weekday:"long", day:"2-digit", month:"long", year:"numeric"}));
+}
+
+/* ==================== Estado global ==================== */
+let patternsData = null;
+let conversionHistory = [];
+const stats = { total:0, sat:0, pats:0, sizeKB:0, last:null };
+
+/* ==================== Patrones por defecto ==================== */
+const defaultPatterns = {
+  "patterns":[
+    { "id":1, "natural":"La suma de {var1} y {var2}", "algebraic":"{var1} + {var2}", "category":"operaciones_basicas" },
+    { "id":2, "natural":"La resta de {var1} y {var2}", "algebraic":"{var1} - {var2}", "category":"operaciones_basicas" },
+    { "id":3, "natural":"El producto de {var1} y {var2}", "algebraic":"{var1} × {var2}", "category":"operaciones_basicas" },
+    { "id":4, "natural":"{var1} dividido por {var2}", "algebraic":"{var1} ÷ {var2}", "category":"operaciones_basicas" },
+    { "id":5, "natural":"La diferencia entre el cuadrado de {var1} y el cuadrado de {var2}", "algebraic":"{var1}^2 - {var2}^2", "category":"combinadas" },
+    { "id":6, "natural":"La {var1} es igual al producto de la {var2} y la {var3}", "algebraic":"{var1} = {var2} × {var3}", "category":"física" }
+  ]
+};
+
+/* ==================== Utilidades ==================== */
+const $ = s => document.querySelector(s);
+function toast(msg){
+  let t = document.getElementById("toaster");
+  if(!t){ t = document.createElement("div"); t.id="toaster";
+    t.style.cssText="position:fixed;bottom:18px;right:18px;z-index:9999;display:flex;gap:10px;flex-direction:column";
+    document.body.appendChild(t);
+  }
+  const el = document.createElement("div");
+  el.textContent = msg;
+  el.style.cssText = `
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    color:white; padding:10px 14px; border-radius:12px; font-weight:800;
+    box-shadow:0 10px 25px rgba(2,6,23,.35);
+    transform: translateY(8px); opacity:.0; transition: all .25s ease;
+  `;
+  t.appendChild(el);
+  requestAnimationFrame(()=>{ el.style.transform="translateY(0)"; el.style.opacity="1"; });
+  setTimeout(()=>{ el.style.transform="translateY(8px)"; el.style.opacity=".0"; }, 1800);
+  setTimeout(()=>{ el.remove(); }, 2200);
+}
+
+function normalizeAlg(expr){
+  return expr.replace(/\s+/g,"")
+             .replace(/²/g,"^2").replace(/³/g,"^3")
+             .replace(/\*/g,"×").replace(/\//g,"÷")
+             .toLowerCase();
+}
+function substitute(tpl, vars){
+  let out = tpl; for(const [k,v] of Object.entries(vars)){
+    out = out.replace(new RegExp("\\{"+k+"\\}","g"), v);
+  } return out;
+}
+function matchNatural(input, pattern){
+  let rx = pattern.toLowerCase();
+  const map = {}; let i=0;
+  rx = rx.replace(/\{(\w+)\}/g, (_,vn)=> (map[vn]=i++,"([a-zA-Z0-9_]+)"));
+  rx = rx.replace(/\s+/g,"\\s*");
+  const re = new RegExp("^\\s*"+rx+"\\s*$");
+  const m = input.toLowerCase().match(re);
+  if(!m) return {ok:false, vars:{}};
+  const vars={}; for(const [name,idx] of Object.entries(map)) vars[name]=m[idx+1];
+  return {ok:true, vars};
+}
+function matchAlg(input, pattern){
+  const a = normalizeAlg(input);
+  let p = normalizeAlg(pattern);
+  p = p.replace(/([+\-\^()\[\].?*\\|])/g,"\\$1"); // escapar regex especiales
+  const map = {}; let i=0;
+  p = p.replace(/\{(\w+)\}/g, (_,vn)=> (map[vn]=i++,"([a-zA-Z0-9_]+)"));
+  const re = new RegExp("^\\s*"+p+"\\s*$");
+  const m = a.match(re);
+  if(!m) return {ok:false, vars:{}};
+  const vars={}; for(const [name,idx] of Object.entries(map)) vars[name]=m[idx+1];
+  return {ok:true, vars};
+}
+
+/* ==================== Núcleo de conversión ==================== */
+function processN2A(input){
+  if(!patternsData?.patterns) return "Error: no hay patrones cargados";
+  for(const p of patternsData.patterns){
+    const m = matchNatural(input, p.natural);
+    if(m.ok) return substitute(p.algebraic, m.vars);
+  }
+  return "No se encontró un patrón coincidente. Agrega este caso a la base.";
+}
+function processA2N(input){
+  if(!patternsData?.patterns) return "Error: no hay patrones cargados";
+  for(const p of patternsData.patterns){
+    const m = matchAlg(input, p.algebraic);
+    if(m.ok) return substitute(p.natural, m.vars);
+  }
+  return "No se encontró un patrón coincidente. Agrega este caso a la base.";
+}
+
+/* ==================== Historial y métricas ==================== */
+function addHist(dir, inp, out){
+  conversionHistory.unshift({ts:new Date().toLocaleString("es-MX"), dir, inp, out});
+  if(conversionHistory.length>80) conversionHistory.pop();
+  renderHist();
+}
+function renderHist(){
+  const c = $("#history-list"); if(!c) return;
+  if(conversionHistory.length===0){ c.innerHTML='<div class="empty">Sin conversiones todavía</div>'; return; }
+  c.innerHTML = conversionHistory.map(h=>`
+    <div class="rowi">
+      <div class="hdr"><span>${h.dir}</span><span class="meta">${h.ts}</span></div>
+      <div class="meta">Entrada: ${h.inp}</div>
+      <div class="out" style="margin-top:6px">${h.out}</div>
+    </div>
+  `).join("");
+}
+function avgWords(){
+  if(!patternsData?.patterns?.length) return 0;
+  const tot = patternsData.patterns.reduce((s,p)=> s + p.natural.trim().split(/\s+/).length, 0);
+  return Math.round(tot / patternsData.patterns.length);
+}
+function refresh(){
+  const set = (id, val)=>{ const el = document.getElementById(id); if(el) el.textContent = val; };
+  set("m-total", stats.total);
+  set("m-sat",   stats.sat);
+  set("m-pat",   stats.pats);
+  set("m-size",  (stats.sizeKB||0) + " KB");
+  set("m-last",  stats.last || "—");
+  set("m-avg",   avgWords());
+}
+
+/* ==================== Patrones / JSON ==================== */
+function loadPatterns(data){
+  patternsData = data;
+  stats.pats = data?.patterns?.length || 0;
+  stats.last = new Date().toLocaleString("es-MX");
+  refresh();
+}
+function onFileChange(){
+  const f = $("#json-file-input")?.files?.[0];
+  const nameEl = $("#file-name");
+  if(nameEl) nameEl.textContent = f ? f.name : "Ningún archivo seleccionado";
+  stats.sizeKB = f ? Math.round(f.size/1024) : 0;
+  const btn = $("#load-json-btn"); if(btn) btn.disabled = !f;
+  refresh();
+}
+function loadJSON(){
+  const f = $("#json-file-input")?.files?.[0];
+  if(!f){ alert("Selecciona un archivo JSON"); return; }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(!Array.isArray(data.patterns)) throw new Error('El JSON debe contener "patterns" (array)');
+      loadPatterns(data);
+      toast("Patrones cargados");
+    }catch(err){ alert("Error al cargar: " + err.message); }
+  };
+  reader.readAsText(f,'utf-8');
+}
+function resetDefault(){
+  loadPatterns(defaultPatterns);
+  stats.sizeKB = 0;
+  const nameEl = $("#file-name"); if(nameEl) nameEl.textContent = "Ningún archivo seleccionado";
+  const inp = $("#json-file-input"); if(inp) inp.value = "";
+  toast("Patrones por defecto");
+}
+
+/* ==================== Delegación de eventos (HOTFIX) ==================== */
+document.addEventListener("click", (ev)=>{
+  const id = ev.target.id || (ev.target.closest("[id]")?.id);
+  if(!id) return;
+
+  // Conversores
+  if(id === "convert-to-algebraic-btn"){
+    const input = $("#natural-input")?.value?.trim();
+    if(!input){ alert("Escribe una expresión en lenguaje natural"); return; }
+    const res = processN2A(input);
+    const out = $("#natural-output"), box = $("#natural-result");
+    if(out&&box){ out.textContent = res; box.style.display = "block"; }
+    stats.total++; addHist("N→A", input, res); refresh(); return;
+  }
+  if(id === "convert-to-natural-btn"){
+    const input = $("#algebraic-input")?.value?.trim();
+    if(!input){ alert("Escribe una expresión algebraica"); return; }
+    const res = processA2N(input);
+    const out = $("#algebraic-output"), box = $("#algebraic-result");
+    if(out&&box){ out.textContent = res; box.style.display = "block"; }
+    stats.total++; addHist("A→N", input, res); refresh(); return;
+  }
+
+  // Marcadores
+  if(id === "natural-satisfactory-btn" || id === "algebraic-satisfactory-btn"){
+    stats.sat++; refresh(); toast("Marcado como satisfactorio"); return;
+  }
+  if(id === "natural-improve-btn" || id === "algebraic-improve-btn"){
+    toast("Marcado para mejora"); return;
+  }
+
+  // Patrón nuevo
+  if(id === "natural-add-pattern-btn" || id === "algebraic-add-pattern-btn"){
+    const mode = id.startsWith("natural") ? "natural" : "algebraic";
+    const input  = (mode==="natural") ? $("#natural-input")?.value : $("#algebraic-input")?.value;
+    const output = (mode==="natural") ? $("#natural-output")?.textContent : $("#algebraic-output")?.textContent;
+    const nat = (mode==="natural") ? input : output;
+    const alg = (mode==="natural") ? output : input;
+    const n = prompt("Expresión en lenguaje natural:", nat || "La suma de a y b"); if(!n) return;
+    const a = prompt("Expresión algebraica:", alg || "a + b"); if(!a) return;
+    const c = prompt("Categoría:", "personalizado") || "personalizado";
+    if(!patternsData) patternsData = {patterns:[]};
+    const nextId = Math.max(0, ...patternsData.patterns.map(p=>p.id||0)) + 1;
+    patternsData.patterns.push({id:nextId, natural:n, algebraic:a, category:c});
+    stats.pats = patternsData.patterns.length; stats.last = new Date().toLocaleString("es-MX");
+    refresh(); toast("Patrón agregado");
+    return;
+  }
+
+  // JSON
+  if(id === "reset-json-btn"){ resetDefault(); return; }
+  if(id === "load-json-btn"){ loadJSON(); return; }
+  if(id === "json-file-input"){ /* manejado por change */ return; }
+
+  // Historial
+  if(id === "clear-history-btn"){
+    if(confirm("¿Limpiar historial?")){ conversionHistory=[]; renderHist(); toast("Historial limpiado"); }
+    return;
+  }
+  if(id === "export-history-btn"){
+    if(conversionHistory.length===0){ alert("No hay historial para exportar"); return; }
+    const blob = new Blob([JSON.stringify(conversionHistory,null,2)], {type:"application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "historial_conversiones_"+new Date().toISOString().slice(0,10)+".json";
+    a.click();
+    setTimeout(()=> URL.revokeObjectURL(a.href), 800);
+    toast("Historial exportado");
+    return;
+  }
+});
+
+/* Cambios de archivo (JSON) */
+document.addEventListener("change", (ev)=>{
+  if(ev.target && ev.target.id === "json-file-input"){ onFileChange(); }
+});
+
+/* ==================== Inicio seguro ==================== */
+function safeInit(){
+  try{
+    loadCover();
+    loadPatterns(defaultPatterns);
+    renderHist();
+    refresh();
+  }catch(err){
+    console.error("Init error:", err);
+    alert("Hubo un detalle inicializando. Recarga la página.");
+  }
+}
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", safeInit);
+}else{
+  safeInit();
+}
+</script>
+</body>
+</html>

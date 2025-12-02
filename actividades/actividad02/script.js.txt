@@ -1,0 +1,149 @@
+// =============================
+//   Lógica de la Recta Numérica
+// =============================
+
+let points = [];
+let currentRange = 10;
+
+// Constantes matemáticas
+const CONSTANTS = {
+    "π": Math.PI, "pi": Math.PI,
+    "e": Math.E,
+    "√2": Math.sqrt(2), "√3": Math.sqrt(3)
+};
+
+// Convertir cadena a número real
+function parseNumber(input) {
+    input = input.trim();
+
+    if (CONSTANTS[input]) return CONSTANTS[input];
+
+    if (input.includes("/")) {
+        let parts = input.split("/");
+        return parseFloat(parts[0]) / parseFloat(parts[1]);
+    }
+
+    if (input.startsWith("√")) {
+        let n = parseFloat(input.substring(1));
+        return Math.sqrt(n);
+    }
+
+    let num = parseFloat(input);
+    if (!isNaN(num)) return num;
+
+    return null;
+}
+
+// CLASIFICAR
+function classifyNumber(num) {
+    if (Number.isInteger(num)) return "ℤ Enteros";
+    if (num > 0 && Number.isInteger(num)) return "ℕ Naturales";
+    if (input.includes("/") || !Number.isInteger(num)) return "ℚ Racionales";
+    return "ℝ − ℚ Irracionales";
+}
+
+// =============================
+//   AGREGAR NÚMERO
+// =============================
+function addNumber() {
+    let input = document.getElementById("numberInput").value;
+    if (!input) return alert("Ingresa un valor");
+
+    let value = parseNumber(input);
+    if (value === null) return alert("Formato inválido");
+
+    if (Math.abs(value) > currentRange)
+        return alert("Fuera del rango -10 a 10");
+
+    points.push({ raw: input, value });
+    updateDisplay();
+}
+
+// PREDEFINIDOS
+function addPresetNumber(n) {
+    let value = parseNumber(n);
+    points.push({ raw: n, value });
+    updateDisplay();
+}
+
+// LIMPIAR
+function clearAll() {
+    points = [];
+    updateDisplay();
+}
+
+// =============================
+//   MOSTRAR EN PANTALLA
+// =============================
+function updateDisplay() {
+    drawLine();
+    updatePointsList();
+    updateSelectors();
+}
+
+// DIBUJAR RECTA
+function drawLine() {
+    const line = document.getElementById("numberLine");
+    line.innerHTML = "";
+
+    for (let x = -currentRange; x <= currentRange; x++) {
+        let tick = document.createElement("div");
+        tick.className = "tick";
+        tick.style.left = ((x + 10) / 20) * 100 + "%";
+        tick.textContent = x;
+        line.appendChild(tick);
+    }
+
+    points.forEach(p => {
+        let dot = document.createElement("div");
+        dot.className = "point";
+        dot.style.left = ((p.value + 10) / 20) * 100 + "%";
+        dot.title = `${p.raw} = ${p.value.toFixed(3)}`;
+        line.appendChild(dot);
+    });
+}
+
+// LISTA DE PUNTOS
+function updatePointsList() {
+    const list = document.getElementById("pointsList");
+
+    if (points.length === 0) {
+        list.innerHTML = "<p>No hay puntos añadidos</p>";
+        return;
+    }
+
+    list.innerHTML = points
+        .map(p => `<div><strong>${p.raw}</strong> → ${p.value.toFixed(6)}</div>`)
+        .join("");
+}
+
+// SELECTORES
+function updateSelectors() {
+    const A = document.getElementById("pointA");
+    const B = document.getElementById("pointB");
+
+    A.innerHTML = "";
+    B.innerHTML = "";
+
+    points.forEach((p, i) => {
+        A.innerHTML += `<option value="${i}">${p.raw}</option>`;
+        B.innerHTML += `<option value="${i}">${p.raw}</option>`;
+    });
+}
+
+// DISTANCIA
+function calculateDistance() {
+    const A = parseInt(document.getElementById("pointA").value);
+    const B = parseInt(document.getElementById("pointB").value);
+
+    if (A === B) {
+        document.getElementById("distanceResult").textContent =
+            "Selecciona 2 puntos distintos.";
+        return;
+    }
+
+    let d = Math.abs(points[A].value - points[B].value);
+
+    document.getElementById("distanceResult").innerHTML =
+        `<strong>Distancia:</strong> ${d.toFixed(6)}`;
+}

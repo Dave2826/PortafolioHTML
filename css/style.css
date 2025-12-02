@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #eef2ff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 30px;
+    margin-top: 40px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    text-align: center;
+}
+
+h1 {
+    color: #1a237e;
+}
+
+.menu-actividades {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn {
+    display: block;
+    padding: 12px;
+    background: #3b82f6;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: .2s;
+}
+
+.btn:hover {
+    background: #1e40af;
+    transform: scale(1.02);
+}
+
+footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #555;
+}

@@ -1,0 +1,26 @@
+function convertir() {
+    const r = parseFloat(document.getElementById("modulo").value);
+    const theta = parseFloat(document.getElementById("angulo").value);
+
+    const box = document.getElementById("resultado");
+
+    if (isNaN(r) || isNaN(theta)) {
+        box.innerHTML = `
+            <p class="error">Error: Ingresa valores válidos.</p>
+        `;
+        return;
+    }
+
+    // Convertir grados → radianes
+    const rad = theta * (Math.PI / 180);
+
+    // d = r * e^(iθ)
+    const result = `${r} · e<sup>i(${rad.toFixed(4)})</sup>`;
+
+    box.innerHTML = `
+        <h3>Conversión completada</h3>
+        <p><strong>θ (radianes):</strong> ${rad.toFixed(4)}</p>
+        <p><strong>Forma Exponencial:</strong></p>
+        <p class="resultado">${result}</p>
+    `;
+}

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Conversiones - Números Complejos</title>
+<style>
+/* ==================== RESET BÁSICO ==================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* ==================== ESTRUCTURA GENERAL ==================== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  padding: 20px;
+  line-height: 1.6;
+}
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  padding: 30px;
+}
+/* ==================== ENCABEZADOS ==================== */
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-weight: 300;
+  font-size: 28px;
+}
+h2 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 500;
+}
+/* ==================== INSTRUCCIONES ==================== */
+.instructions {
+  background-color: #ecf0f1;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+  font-size: 14px;
+  color: #555;
+}
+.instructions ul {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+.instructions li {
+  margin-bottom: 5px;
+}
+/* ==================== SECCIONES DE FORMULARIO ==================== */
+.form-section {
+  margin-bottom: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 20px;
+  background: white;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+label {
+  min-width: 20px;
+  font-weight: 500;
+  color: #555;
+  font-size: 16px;
+}
+.operator {
+  font-size: 16px;
+  color: #666;
+  margin: 0 5px;
+  font-weight: 500;
+}
+/* ==================== CAMPOS DE ENTRADA ==================== */
+input[type="text"] {
+  width: 100px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+input[readonly] {
+  background-color: #f0f0f0 !important;
+  cursor: not-allowed;
+}
+/* ==================== RESULTADOS ==================== */
+.result {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #3498db;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: #2c3e50;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+/* ==================== BOTÓN LIMPIAR ==================== */
+.clear-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 500;
+}
+.clear-btn:hover {
+  background-color: #c0392b;
+  transform: translateY(-1px);
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Calculadora de Conversiones de Números Complejos</h1>
+<div class="instructions">
+<strong>Instrucciones:</strong>
+<ul>
+<li>Ingresa un número complejo en cualquiera de las tres formas</li>
+<li>Las otras formas se calcularán automáticamente</li>
+<li>Los ángulos se expresan en radianes y en múltiplos de pi cuando es posible</li>
+<li>Ejemplos: pi, pi/2, sqrt(2), 1.5, -2.7</li>
+</ul>
+</div>
+
+<!-- Forma Cartesiana -->
+<div class="form-section">
+<h2>Forma Cartesiana: a + bi</h2>
+<div class="input-group">
+<label>z =</label>
+<input type="text" id="real" placeholder="a (ej: sqrt(2))">
+<span class="operator">+</span>
+<input type="text" id="imag" placeholder="b (ej: sqrt(3))">
+<span class="operator">i</span>
+</div>
+<div class="result" id="cartesian-result">Ingresa los valores arriba</div>
+</div>
+
+<!-- Forma Polar -->
+<div class="form-section">
+<h2>Forma Polar: r(cos θ + i sin θ)</h2>
+<div class="input-group">
+<label>z =</label>
+<input type="text" id="modulus" placeholder="r (ej: sqrt(2))">
+<span class="operator">(cos</span>
+<input type="text" id="angle" placeholder="θ (ej: pi/2)">
+<span class="operator">+ i sin</span>
+<input type="text" id="angle2" placeholder="θ" readonly style="background: #f0f0f0;">
+<span class="operator">)</span>
+</div>
+<div class="result" id="polar-result">Ingresa los valores arriba</div>
+</div>
+
+<!-- Forma Exponencial -->
+<div class="form-section">
+<h2>Forma Exponencial: re^(iθ)</h2>
+<div class="input-group">
+<label>z =</label>
+<input type="text" id="exp-modulus" placeholder="r (ej: sqrt(5))">
+<span class="operator">e^(i*</span>
+<input type="text" id="exp-angle" placeholder="θ (ej: pi/4)">
+<span class="operator">)</span>
+</div>
+<div class="result" id="exponential-result">Ingresa los valores arriba</div>
+</div>
+
+<button class="clear-btn" onclick="clearAll()">Limpiar Todo</button>
+</div>
+
+<script>
+// ==================== VARIABLES GLOBALES ====================
+let isUpdating = false; // Previene bucles infinitos
+
+// ==================== FUNCIONES DE PARSEO ====================
+function parseNumber(input) {
+  if (!input && input !== 0) return 0;
+  const inputStr = input.toString().trim();
+  if (!inputStr) return 0;
+  let expression = inputStr
+    .replace(/sqrt\s*\(/gi, 'Math.sqrt(')
+    .replace(/pi\b/gi, 'Math.PI');
+  try {
+    const result = Function('"use strict"; return (' + expression + ')')();
+    return (isNaN(result) || !isFinite(result)) ? 0 : result;
+  } catch {
+    return 0;
+  }
+}
+function parseAngle(input) { return parseNumber(input); }
+
+// ==================== FUNCIONES DE APOYO ====================
+function normalizeAngle(angle) {
+  while (angle > Math.PI) angle -= 2 * Math.PI;
+  while (angle <= -Math.PI) angle += 2 * Math.PI;
+  return angle;
+}
+function formatNumber(num) {
+  if (Math.abs(num - Math.round(num)) < 1e-8) return Math.round(num).toString();
+  return parseFloat(num.toFixed(4)).toString();
+}
+function angleToPI(angle) {
+  if (Math.abs(angle - Math.PI/2) < 1e-8) return "pi/2";
+  if (Math.abs(angle - Math.PI) < 1e-8) return "pi";
+  if (Math.abs(angle + Math.PI/2) < 1e-8) return "-pi/2";
+  return angle.toFixed(3);
+}
+
+// ==================== ACTUALIZACIÓN DE FORMAS ====================
+function updateFromCartesian() {
+  if (isUpdating) return; isUpdating = true;
+  const real = parseNumber(document.getElementById('real').value);
+  const imag = parseNumber(document.getElementById('imag').value);
+  const modulus = Math.sqrt(real*real + imag*imag);
+  const angle = normalizeAngle(Math.atan2(imag, real));
+  document.getElementById('modulus').value = formatNumber(modulus);
+  document.getElementById('angle').value = angleToPI(angle);
+  document.getElementById('angle2').value = angleToPI(angle);
+  document.getElementById('exp-modulus').value = formatNumber(modulus);
+  document.getElementById('exp-angle').value = angleToPI(angle);
+  updateResults(real, imag, modulus, angle);
+  isUpdating = false;
+}
+function updateFromPolar() {
+  if (isUpdating) return; isUpdating = true;
+  const modulus = parseNumber(document.getElementById('modulus').value);
+  const angle = normalizeAngle(parseAngle(document.getElementById('angle').value));
+  const real = modulus * Math.cos(angle);
+  const imag = modulus * Math.sin(angle);
+  document.getElementById('real').value = formatNumber(real);
+  document.getElementById('imag').value = formatNumber(imag);
+  document.getElementById('exp-modulus').value = formatNumber(modulus);
+  document.getElementById('exp-angle').value = angleToPI(angle);
+  document.getElementById('angle2').value = angleToPI(angle);
+  updateResults(real, imag, modulus, angle);
+  isUpdating = false;
+}
+function updateFromExponential() {
+  if (isUpdating) return; isUpdating = true;
+  const modulus = parseNumber(document.getElementById('exp-modulus').value);
+  const angle = normalizeAngle(parseAngle(document.getElementById('exp-angle').value));
+  const real = modulus * Math.cos(angle);
+  const imag = modulus * Math.sin(angle);
+  document.getElementById('real').value = formatNumber(real);
+  document.getElementById('imag').value = formatNumber(imag);
+  document.getElementById('modulus').value = formatNumber(modulus);
+  document.getElementById('angle').value = angleToPI(angle);
+  document.getElementById('angle2').value = angleToPI(angle);
+  updateResults(real, imag, modulus, angle);
+  isUpdating = false;
+}
+
+// ==================== RESULTADOS ====================
+function updateResults(real, imag, modulus, angle) {
+  const angleText = angleToPI(angle);
+  document.getElementById('cartesian-result').textContent = `z = ${formatNumber(real)} ${imag>=0?'+':'-'} ${formatNumber(Math.abs(imag))}i`;
+  document.getElementById('polar-result').textContent = `z = ${formatNumber(modulus)}(cos(${angleText}) + i·sin(${angleText}))`;
+  document.getElementById('exponential-result').textContent = `z = ${formatNumber(modulus)}e^(i·${angleText})`;
+  // 🔊 Sonido opcional
+  // new Audio("click.mp3").play();
+}
+
+// ==================== LIMPIAR ====================
+function clearAll() {
+  document.querySelectorAll('input').forEach(el => el.value = "");
+  document.querySelectorAll('.result').forEach(el => el.textContent = "Ingresa los valores arriba");
+}
+
+// ==================== EVENTOS ====================
+document.getElementById('real').addEventListener('input', updateFromCartesian);
+document.getElementById('imag').addEventListener('input', updateFromCartesian);
+document.getElementById('modulus').addEventListener('input', updateFromPolar);
+document.getElementById('angle').addEventListener('input', updateFromPolar);
+document.getElementById('exp-modulus').addEventListener('input', updateFromExponential);
+document.getElementById('exp-angle').addEventListener('input', updateFromExponential);
+</script>
+</body>
+</html>

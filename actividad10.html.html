@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Actividad 8 – Calculadora Algebraica</title>
+<style>
+:root{
+  --bg1:#f7ecff;
+  --bg2:#eaf9ff;
+  --panel:#ffffff;
+  --ink:#2b2b2b;
+  --muted:#70768a;
+  --ring:#a4d6ff;
+  --gradA:#a8d8ff;
+  --gradB:#ffcfe6;
+  --gradC:#c8ffdd;
+  --accent:#6c7ae0;
+  --accent-2:#00c2a8;
+  --good:#10b981;
+  --warn:#f59e0b;
+  --bad:#ef4444;
+  --soft:#eef6ff;
+  --soft-2:#fff6fb;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, Inter, system-ui, Arial;
+  color:var(--ink);
+  background:
+    radial-gradient(1000px 650px at -10% -10%, rgba(168,216,255,.35), transparent 55%),
+    radial-gradient(900px 600px at 110% 0%, rgba(255,207,230,.35), transparent 55%),
+    linear-gradient(135deg, var(--bg1), var(--bg2));
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+
+/* Card principal */
+.app{
+  width: min(920px, 100%);
+  background: color-mix(in oklab, var(--panel) 82%, #fff 18%);
+  border: 1px solid rgba(99, 102, 241, .15);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow:
+    0 20px 60px rgba(16, 24, 40, .14),
+    inset 0 1px 0 rgba(255,255,255,.5);
+  backdrop-filter: blur(6px);
+  animation: rise .6s ease;
+}
+@keyframes rise{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)}}
+
+/* Encabezado con datos */
+.header{
+  padding: 14px 16px;
+  background: linear-gradient(90deg, var(--gradA), var(--gradB), var(--gradC));
+  border-radius: 14px;
+  border:1px solid rgba(0,0,0,.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
+  margin-bottom: 18px;
+}
+.header h1{
+  margin:0 0 6px 0;
+  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
+  color:#2d2d2d;
+  letter-spacing:.2px;
+}
+.meta{
+  display:grid; gap:6px 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  font-size:.95rem;
+  color:#2f3342;
+}
+.meta b{color:#1f2a44}
+
+/* Grid principal */
+.grid{
+  display:grid; gap:18px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 860px){
+  .grid{grid-template-columns:1fr}
+}
+
+/* Bloques */
+.block{
+  background: linear-gradient(180deg, #fff, #fbfdff);
+  border:1px solid rgba(0,0,0,.07);
+  border-radius:14px; padding:14px;
+  box-shadow: 0 8px 22px rgba(17, 24, 39, .07);
+}
+.block h2{
+  margin:0 0 8px 0; font-size:1rem; color:#334155; letter-spacing:.2px;
+}
+label{display:block; font-weight:700; color:#54607a; margin-bottom:6px}
+
+/* Textareas */
+textarea{
+  width:100%; min-height:130px; resize:vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
+  font-size: .98rem; line-height:1.4;
+  padding:12px; border-radius:12px;
+  border:1px solid rgba(99, 102, 241, .18);
+  background: var(--soft);
+  outline:none;
+  transition: box-shadow .15s ease, border-color .15s ease, background .15s ease;
+}
+textarea:focus{
+  border-color:var(--ring);
+  box-shadow: 0 0 0 3px rgba(164,214,255,.35);
+  background:#fff;
+}
+#ecuaciones{ background: var(--soft-2); }
+
+/* Botones */
+.actions{display:grid; gap:10px; grid-template-columns: 1fr 1fr;}
+@media (max-width: 600px){ .actions{grid-template-columns:1fr} }
+
+.btn{
+  padding:12px 14px; border-radius:12px; border:none; cursor:pointer;
+  font-weight:900; letter-spacing:.2px; font-size: .98rem;
+  color:#1f2a44; background: linear-gradient(90deg, var(--gradA), var(--gradC));
+  box-shadow: 0 10px 24px rgba(2,6,23,.12);
+  transition: transform .06s ease, filter .2s ease, box-shadow .25s ease;
+}
+.btn:hover{ filter: saturate(1.05) brightness(1.02) }
+.btn:active{ transform: translateY(1px) scale(.995) }
+
+.btn-alt{
+  background: linear-gradient(90deg, #ffd7ef, #e1e9ff);
+}
+
+/* Resultado */
+.result{
+  background: #fafcff;
+  border:1px solid rgba(0,0,0,.07);
+  border-left:4px solid var(--accent);
+  padding:14px; border-radius:12px;
+  font-family: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  white-space: pre-wrap; min-height:84px;
+}
+.badge{
+  display:inline-block; padding:4px 8px; border-radius:999px;
+  font-size:.78rem; font-weight:800; letter-spacing:.3px; margin-bottom:8px;
+  background: #e9f3ff; color:#244568; border:1px solid rgba(0,0,0,.07);
+}
+
+/* Ayuda */
+.help{
+  margin-top:6px; font-size:.92rem; color:var(--muted);
+}
+.help details{
+  border:1px dashed rgba(0,0,0,.12);
+  padding:10px 12px; border-radius:10px; background:#ffffffc2;
+}
+.help summary{ cursor:pointer; font-weight:800; color:#3b3f58 }
+
+/* Footer */
+.footer{
+  margin-top:16px; padding-top:12px;
+  border-top:1px dashed rgba(0,0,0,.1);
+  font-size:.92rem; color:#586076; text-align:center;
+}
+
+/* Toast */
+.toast{
+  position: fixed; top:16px; right:16px; z-index:9999;
+  background:#111827; color:#fff; padding:10px 14px; border-radius:10px;
+  box-shadow: 0 12px 28px rgba(0,0,0,.25); opacity:0; transform: translateY(-6px);
+  transition: opacity .25s ease, transform .25s ease;
+  font-weight:700; font-size:.92rem;
+}
+.toast.show{ opacity:1; transform: translateY(0) }
+.toast.good{ background:#0f5132 }
+.toast.warn{ background:#7a4b00 }
+.toast.bad{ background:#7f1d1d }
+</style>
+</head>
+<body>
+  <div class="app">
+    <!-- ENCABEZADO CON TUS DATOS -->
+    <div class="header">
+      <h1>Actividad 8 – Calculadora Algebraica</h1>
+      <div class="meta">
+        <div><b>Institución:</b> Tecnológico de Software</div>
+        <div><b>Materia:</b> Fundamentos de Álgebra</div>
+        <div><b>Docente:</b> Javier Pedrozo</div>
+        <div><b>Alumno:</b> David Morales Guerrero</div>
+        <div><b>Grupo:</b> 1A</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Variables -->
+      <div class="block">
+        <h2>Variables</h2>
+        <label for="vars">Define tus variables (coma o salto de línea). Ej: <code>a=5, b=2</code> ó <code>a=5↵b=2</code></label>
+        <textarea id="vars" placeholder="a=5, b=2, c = 3&#10;base = 10/2&#10;altura = 7"></textarea>
+        <div class="help">
+          <details>
+            <summary>Ayuda rápida</summary>
+            <div style="margin-top:8px">
+              • Puedes usar expresiones: <code>x=2+3*4</code>  ·  <code>k = (10-2)/2</code><br/>
+              • Soporta funciones de <b>Math</b>: <code>pow(2,3)</code>, <code>sqrt(9)</code>, <code>sin(PI/2)</code>, <code>round(3.6)</code>...
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <!-- Ecuaciones -->
+      <div class="block">
+        <h2>Ecuaciones</h2>
+        <label for="eqs">Una por línea. Puedes encadenar resultados. Ej: <code>r = a*b + c</code></label>
+        <textarea id="eqs" placeholder="r = a*b + c&#10;s = (a + b) * c&#10;t = (a*b + c) / (a - b)"></textarea>
+        <div class="actions">
+          <button id="btnCalc" class="btn">Calcular (Ctrl+Enter)</button>
+          <button id="btnClear" class="btn btn-alt">Limpiar</button>
+        </div>
+        <div class="actions" style="margin-top:8px">
+          <button id="btnSample" class="btn btn-alt">Cargar ejemplo</button>
+          <button id="btnCopy" class="btn">Copiar resultados</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div class="block" style="margin-top:18px">
+      <div class="badge">Resultados</div>
+      <div id="out" class="result">Los resultados aparecerán aquí…</div>
+    </div>
+
+    <div class="footer">
+      TSU 2025
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================
+   CALCULADORA PASTEL PRO
+   ========================= */
+
+// Elementos
+const $vars = document.getElementById('vars');
+const $eqs  = document.getElementById('eqs');
+const $out  = document.getElementById('out');
+const btnCalc  = document.getElementById('btnCalc');
+const btnClear = document.getElementById('btnClear');
+const btnSample= document.getElementById('btnSample');
+const btnCopy  = document.getElementById('btnCopy');
+const $toast = document.getElementById('toast');
+
+// Toast helper
+function toast(msg, type="good"){
+  $toast.textContent = msg;
+  $toast.className = `toast show ${type}`;
+  setTimeout(()=>{ $toast.classList.remove('show') }, 2200);
+}
+
+// Guardado local (autosave)
+const LS_KEY_VARS = 'calc_vars';
+const LS_KEY_EQS  = 'calc_eqs';
+
+function saveLS(){
+  localStorage.setItem(LS_KEY_VARS, $vars.value);
+  localStorage.setItem(LS_KEY_EQS,  $eqs.value);
+}
+function loadLS(){
+  const v = localStorage.getItem(LS_KEY_VARS);
+  const e = localStorage.getItem(LS_KEY_EQS);
+  if(v) $vars.value = v;
+  if(e) $eqs.value  = e;
+}
+loadLS();
+$vars.addEventListener('input', saveLS);
+$eqs.addEventListener('input', saveLS);
+
+// Parser de variables (acepta comas o saltos de línea)
+function parseVariables(text){
+  const allowed = /^[\w\s+\-*/().,^=,]+$/i;
+  if(!allowed.test(text.replace(/\n/g,','))) {
+    throw new Error("Variables contienen caracteres no permitidos.");
+  }
+  const env = {};
+  const lines = text
+    .split(/\n|,/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  for(const line of lines){
+    const m = line.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+    if(!m) continue;
+    const [, name, expr] = m;
+    env[name] = evalExpression(expr, env);
+  }
+  return env;
+}
+
+// Eval seguro (sólo caracteres permitidos + Math limitado)
+const SafeMath = {
+  // constantes
+  PI: Math.PI, E: Math.E,
+  // funciones
+  pow: Math.pow, sqrt: Math.sqrt,
+  sin: Math.sin, cos: Math.cos, tan: Math.tan,
+  log: Math.log, abs: Math.abs,
+  min: Math.min, max: Math.max,
+  round: Math.round, floor: Math.floor, ceil: Math.ceil
+};
+const SAFE_CHARS = /^[0-9a-zA-Z_+\-*/().,\s^]+$/;
+
+function evalExpression(expression, env){
+  const expr = expression.trim();
+
+  if(!SAFE_CHARS.test(expr)){
+    throw new Error("Expresión contiene caracteres inválidos.");
+  }
+
+  // Reemplazar potencias ^ por ** (JavaScript)
+  let processed = expr.replace(/\^/g, '**');
+
+  // Reemplazar variables por su valor con límites de palabra
+  for(const [k,v] of Object.entries(env)){
+    const re = new RegExp(`\\b${k}\\b`, 'g');
+    processed = processed.replace(re, `(${v})`);
+  }
+
+  // Ejecutar en sandbox con Math limitado
+  // Se pasa como primer arg SafeMath y como segundo las variables (ya reemplazadas arriba)
+  try{
+    const fn = new Function('M', `with(M){ return (${processed}) }`);
+    return fn(SafeMath);
+  }catch(e){
+    throw new Error("No se pudo evaluar: " + expression);
+  }
+}
+
+// Evaluar ecuaciones línea por línea
+function evaluateAll(varsText, eqsText){
+  const env = parseVariables(varsText);
+  const lines = eqsText.split('\n').map(s=>s.trim()).filter(Boolean);
+  const results = [];
+
+  for(const line of lines){
+    // Forma con asignación: nombre = expresión
+    const m = line.match(/^([a-zA-Z_]\w*)\s*=\s*(.+)$/);
+    if(m){
+      const [, name, expr] = m;
+      const value = evalExpression(expr, env);
+      env[name] = value;
+      results.push(`${name} = ${value}`);
+    }else{
+      // Expresión suelta
+      const value = evalExpression(line, env);
+      results.push(`${line} = ${value}`);
+    }
+  }
+  return results;
+}
+
+// Botones
+btnCalc.addEventListener('click', ()=>{
+  try{
+    if(!$vars.value.trim() || !$eqs.value.trim()){
+      $out.textContent = "Por favor ingresa variables y ecuaciones.";
+      toast("Faltan datos", "warn");
+      return;
+    }
+    const res = evaluateAll($vars.value, $eqs.value);
+    $out.textContent = res.join('\n');
+    toast("¡Cálculo exitoso!", "good");
+  }catch(err){
+    $out.textContent = "Error: " + err.message;
+    toast("Error en evaluación", "bad");
+  }
+});
+
+// Ctrl+Enter para calcular
+document.addEventListener('keydown', (e)=>{
+  if(e.ctrlKey && e.key === 'Enter'){
+    btnCalc.click();
+  }
+});
+
+// Limpiar
+btnClear.addEventListener('click', ()=>{
+  $vars.value = "";
+  $eqs.value  = "";
+  $out.textContent = "Los resultados aparecerán aquí…";
+  saveLS();
+  toast("Campos limpiados", "warn");
+});
+
+// Cargar ejemplo
+btnSample.addEventListener('click', ()=>{
+  $vars.value = "a=5, b=2, c=3\nbase=10/2\naltura=7\np=2.5, q=0.4";
+  $eqs.value  = "r = a*b + c\ns = (a + b) * c\nt = (a*b + c) / (a - b)\nA = (base * altura) / 2\nm = p*q + 1\nz = pow(a,2) + pow(c,3)";
+  saveLS();
+  toast("Ejemplo cargado", "good");
+});
+
+// Copiar resultados
+btnCopy.addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText($out.textContent.trim());
+    toast("Resultados copiados", "good");
+  }catch{
+    toast("No se pudo copiar", "bad");
+  }
+});
+</script>
+</body>
+</html>

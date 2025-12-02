@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>División Sintética - Tema Halloween 🎃</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0a0a0a, #1a1a1a 60%);
+  color: #f0e6d2;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 10px;
+}
+
+.container {
+  background: rgba(20, 20, 20, 0.95);
+  border: 2px solid #ff6b00;
+  border-radius: 12px;
+  box-shadow: 0 0 25px #ff6b00aa, inset 0 0 10px #ff6b00aa;
+  width: 100%;
+  max-width: 900px;
+  padding: 30px 40px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.container:hover {
+  transform: scale(1.01);
+  box-shadow: 0 0 40px #ff7b00cc;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.header h2 {
+  color: #ff6b00;
+  text-shadow: 0 0 10px #ff7b00, 0 0 20px #ff4800;
+  font-size: 1.8em;
+  margin-bottom: 8px;
+}
+
+.header p {
+  color: #ddd;
+  font-size: 0.95em;
+  line-height: 1.5em;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.9em;
+  color: #ff9d00;
+  text-shadow: 0 0 15px #ff9d00, 0 0 5px #ff4800;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #b389ff;
+  margin-bottom: 25px;
+  font-style: italic;
+}
+
+label {
+  color: #ffae00;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 8px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ff9d00;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 1em;
+  transition: box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+  box-shadow: 0 0 10px #ff9d00;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  background: linear-gradient(90deg, #ff6b00, #ffae00);
+  color: #000;
+  border: none;
+  padding: 14px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: linear-gradient(90deg, #ffae00, #ff6b00);
+  color: #1a1a1a;
+  transform: scale(1.03);
+  box-shadow: 0 0 15px #ff9d00cc;
+}
+
+.result-section {
+  margin-top: 30px;
+  display: none;
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid #ff6b00;
+}
+
+.result-section.show {
+  display: block;
+}
+
+.result-title {
+  font-size: 1.2em;
+  color: #ffae00;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ffae00;
+  padding-bottom: 5px;
+}
+
+.process-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.process-table td {
+  border: 1px solid #ff6b00;
+  padding: 10px;
+  text-align: center;
+}
+
+.process-table tr:first-child td {
+  background: #ff6b00;
+  color: #000;
+  font-weight: 700;
+}
+
+.divisor-cell {
+  background: #2b2b2b;
+  color: #ffae00;
+  font-weight: 500;
+}
+
+.final-result {
+  background: #1e1e1e;
+  border: 1px solid #ff6b00;
+  padding: 15px;
+  border-radius: 6px;
+}
+
+.final-result p {
+  margin: 8px 0;
+  color: #ffcf70;
+}
+
+.error {
+  background: #4b0000;
+  border: 1px solid #ff3b3b;
+  color: #ffbebe;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 20px;
+}
+
+.example {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #ccc;
+  background: #2a2a2a;
+  border-left: 3px solid #ff6b00;
+  padding: 10px;
+  border-radius: 5px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h2>Tecnológico del Software</h2>
+    <p>
+      <strong>Materia:</strong> Fundamentos de Álgebra<br>
+      <strong>Docente:</strong> Jorge Javier Pedrozo Romero<br>
+      <strong>Alumno:</strong> David Morales Guerrero<br>
+      <strong>Grupo:</strong> 1A
+    </p>
+  </div>
+
+  <h1> División Sintética de Polinomios </h1>
+  <p class="subtitle">Soporta coeficientes y raíces reales o complejas</p>
+
+  <div class="input-section">
+    <label for="polinomio">Polinomio:</label>
+    <input type="text" id="polinomio" placeholder="Ejemplo: 5x^3 + 3x^2 + 2x + 1 o x^2 - 6x + 11">
+    <div class="example">
+      <strong>Ejemplos:</strong><br>
+      • 5x^3 + 3x^2 + 2x + 1<br>
+      • x^3 - 6x^2 + 11x - 6<br>
+      • 2x^2 + (3+2i)x + 1<br>
+      • x^4 - 1
+    </div>
+  </div>
+
+  <div class="input-section">
+    <label for="raiz">Raíz (divisor):</label>
+    <input type="text" id="raiz" placeholder="Ejemplo: 2 o 1+i">
+    <div class="example">
+      <strong>Ejemplos:</strong> 2, -3, 1+i, 2-3i
+    </div>
+  </div>
+
+  <button onclick="calcularDivision()"> Calcular División Sintética</button>
+  <div id="resultado" class="result-section"></div>
+</div>
+
+<script>
+class NumeroComplejo {
+  constructor(real, imag = 0) {
+    this.real = real; this.imag = imag;
+  }
+  sumar(otro) {
+    return new NumeroComplejo(this.real + otro.real, this.imag + otro.imag);
+  }
+  multiplicar(otro) {
+    return new NumeroComplejo(
+      this.real * otro.real - this.imag * otro.imag,
+      this.real * otro.imag + this.imag * otro.real
+    );
+  }
+  toString() {
+    if (this.imag === 0) return this.real.toFixed(4).replace(/\.?0+$/, '');
+    const realStr = this.real.toFixed(4).replace(/\.?0+$/, '');
+    const imagStr = Math.abs(this.imag).toFixed(4).replace(/\.?0+$/, '');
+    if (this.real === 0) return `${imagStr}i`;
+    const signo = this.imag >= 0 ? '+' : '-';
+    return `${realStr}${signo}${imagStr}i`;
+  }
+  esReal() { return Math.abs(this.imag) < 1e-10; }
+}
+
+function parsearComplejo(str) {
+  str = str.trim().replace(/\s/g, '');
+  if (!str.includes('i')) return new NumeroComplejo(parseFloat(str));
+  str = str.replace(/i/g, '');
+  let real = 0, imag = 0;
+  if (str.indexOf('+') > 0 || (str.indexOf('-') > 0 && str.indexOf('-') !== 0)) {
+    const partes = str.split(/(?=[+-])/);
+    real = parseFloat(partes[0]) || 0;
+    imag = parseFloat(partes[1]) || 1;
+  } else imag = parseFloat(str) || 1;
+  return new NumeroComplejo(real, imag);
+}
+
+function parsearPolinomio(str) {
+  str = str.trim().replace(/\s/g, '');
+  const gradoMatch = str.match(/x\^(\d+)/g);
+  let gradoMax = gradoMatch ? Math.max(...gradoMatch.map(m => parseInt(m.match(/\d+/)[0]))) : (str.includes('x') ? 1 : 0);
+  const coeficientes = new Array(gradoMax + 1).fill(null).map(() => new NumeroComplejo(0));
+  str = str.replace(/([+-])\s*x/g, '$1 1x').replace(/^x/, '1x');
+  const terminos = str.match(/[+-]?[^+-]+/g) || [];
+  for (let termino of terminos) {
+    termino = termino.trim();
+    if (!termino) continue;
+    let coef, grado;
+    if (!termino.includes('x')) {
+      coef = parsearComplejo(termino); grado = 0;
+    } else if (termino.includes('x^')) {
+      const partes = termino.split('x^');
+      coef = partes[0] === '' || partes[0] === '+' ? new NumeroComplejo(1) : partes[0] === '-' ? new NumeroComplejo(-1) : parsearComplejo(partes[0]);
+      grado = parseInt(partes[1]);
+    } else {
+      const partes = termino.split('x');
+      coef = partes[0] === '' || partes[0] === '+' ? new NumeroComplejo(1) : partes[0] === '-' ? new NumeroComplejo(-1) : parsearComplejo(partes[0]);
+      grado = 1;
+    }
+    const indice = gradoMax - grado;
+    coeficientes[indice] = coeficientes[indice].sumar(coef);
+  }
+  return coeficientes;
+}
+
+function divisionSintetica(coeficientes, raiz) {
+  const n = coeficientes.length;
+  const proceso = [ [...coeficientes], [new NumeroComplejo(0)] ];
+  const resultado = [coeficientes[0]];
+  for (let i = 1; i < n; i++) {
+    const producto = resultado[i - 1].multiplicar(raiz);
+    proceso[1].push(producto);
+    resultado.push(coeficientes[i].sumar(producto));
+  }
+  return { proceso, resultado, cociente: resultado.slice(0, -1), residuo: resultado[resultado.length - 1] };
+}
+
+function calcularDivision() {
+  try {
+    const polinomioStr = document.getElementById('polinomio').value;
+    const raizStr = document.getElementById('raiz').value;
+    if (!polinomioStr || !raizStr) throw new Error('Por favor ingresa todos los datos');
+    const coeficientes = parsearPolinomio(polinomioStr);
+    const raiz = parsearComplejo(raizStr);
+    const resultado = divisionSintetica(coeficientes, raiz);
+    mostrarResultado(resultado, coeficientes, raiz, polinomioStr);
+  } catch (error) {
+    document.getElementById('resultado').innerHTML = `<div class="error"><strong>Error:</strong> ${error.message}</div>`;
+    document.getElementById('resultado').classList.add('show');
+  }
+}
+
+function mostrarResultado(resultado, coeficientes, raiz, polinomioOriginal) {
+  let html = `<div class="result-title">Polinomio Original</div>
+    <div style="text-align:center;font-size:1.1em;margin-bottom:20px;padding:10px;background:#222;border-radius:6px;">${polinomioOriginal}</div>`;
+  html += `<div class="result-title">Coeficientes Extraídos</div><table class="process-table"><tr>`;
+  coeficientes.forEach((_, i) => {
+    const exp = coeficientes.length - 1 - i;
+    html += `<td><strong>${exp === 0 ? 'Término independiente' : exp === 1 ? 'x' : 'x<sup>' + exp + '</sup>'}</strong></td>`;
+  });
+  html += `</tr><tr>${coeficientes.map(c => `<td>${c.toString()}</td>`).join('')}</tr></table>`;
+  html += `<div class="result-title">Proceso de División Sintética</div>
+  <table class="process-table">
+  <tr><td class="divisor-cell">Divisor: ${raiz.toString()}</td>${coeficientes.map(c => `<td>${c.toString()}</td>`).join('')}</tr>
+  <tr><td class="divisor-cell">Multiplicar y bajar</td>${resultado.proceso[1].map(p => `<td>${p.toString()}</td>`).join('')}</tr>
+  <tr><td class="divisor-cell">Resultado (sumar)</td>${resultado.resultado.map(r => `<td>${r.toString()}</td>`).join('')}</tr>
+  </table>
+  <div class="final-result"><p><strong>Cociente:</strong> `;
+  let cocienteStr = '';
+  resultado.cociente.forEach((coef, i) => {
+    const exp = resultado.cociente.length - 1 - i;
+    if (coef.real !== 0 || coef.imag !== 0) {
+      if (cocienteStr && (coef.real > 0 || (coef.real === 0 && coef.imag > 0))) cocienteStr += ' + ';
+      cocienteStr += `(${coef.toString()})`;
+      if (exp > 0) cocienteStr += `x${exp > 1 ? '<sup>' + exp + '</sup>' : ''}`;
+    }
+  });
+  html += cocienteStr || '0';
+  html += `</p><p><strong>Residuo:</strong> ${resultado.residuo.toString()}</p>`;
+  if (resultado.residuo.esReal() && Math.abs(resultado.residuo.real) < 1e-10)
+    html += `<p style="color:#7fff7f;font-weight:600;">✓ La división es exacta (residuo = 0)</p>`;
+  html += `</div>`;
+  document.getElementById('resultado').innerHTML = html;
+  document.getElementById('resultado').classList.add('show');
+}
+</script>
+</body>
+</html>

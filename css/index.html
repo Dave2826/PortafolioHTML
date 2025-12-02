@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador de la Recta Numérica - Actividad 02</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS global del portafolio -->
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Visualizador de la Recta Numérica</h1>
+    <h2>Actividad 02 - Fundamentos de Álgebra</h2>
+
+    <!-- Portada / datos -->
+    <section class="card">
+        <p><strong>Institución:</strong> Tecnológico de Software</p>
+        <p><strong>Materia:</strong> Fundamentos de Álgebra</p>
+        <p><strong>Docente:</strong> Javier Pedrozo</p>
+        <p><strong>Alumno:</strong> David Morales Guerrero</p>
+        <p><strong>Grupo:</strong> 1-A</p>
+    </section>
+
+    <!-- Controles de entrada -->
+    <section class="card">
+        <h3>Controles de Entrada</h3>
+        <div class="input-group-recta">
+            <label for="numberInput">Valor del número:</label>
+            <input type="text" id="numberInput" placeholder="Ej: sqrt(7), 2*π, √2, 1/3">
+            <button type="button" onclick="addNumber()">Agregar número</button>
+            <button type="button" onclick="clearAll()">Limpiar todo</button>
+        </div>
+
+        <div class="preset-section">
+            <h3>Números predefinidos</h3>
+            <p>Haz clic en cualquier número para agregarlo automáticamente a la recta:</p>
+            <div class="preset-numbers">
+                <button type="button" class="preset-btn" onclick="addPresetNumber('π')">π</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('e')">e</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('√2')">√2</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('√3')">√3</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('φ')">φ</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('1/3')">1/3</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('-1/2')">-1/2</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('2.5')">2.5</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('-√2')">-√2</button>
+                <button type="button" class="preset-btn" onclick="addPresetNumber('2*π')">2*π</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recta numérica -->
+    <section class="card">
+        <h3>Recta numérica interactiva</h3>
+        <div class="number-line-container">
+            <div class="number-line" id="numberLine"></div>
+            <p class="range-info">
+                <small>Rango de visualización: -10 a +10 (números fuera de este rango no se mostrarán)</small>
+            </p>
+        </div>
+    </section>
+
+    <!-- Paneles laterales -->
+    <section class="info-panels-recta">
+        <!-- Clasificación -->
+        <div class="classification-panel">
+            <h3>Clasificación de conjuntos numéricos</h3>
+            <div class="classification-legend">
+                <div class="legend-item">
+                    <div class="legend-color naturals"></div>
+                    <span><strong>ℕ - Naturales:</strong> {1, 2, 3, 4, ...}</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color integers"></div>
+                    <span><strong>ℤ - Enteros:</strong> {..., -2, -1, 0, 1, 2, ...}</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color rationals"></div>
+                    <span><strong>ℚ - Racionales:</strong> Fracciones y decimales finitos/periódicos</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color irrationals"></div>
+                    <span><strong>ℝ-ℚ - Irracionales:</strong> π, e, √2, decimales infinitos no periódicos</span>
+                </div>
+            </div>
+
+            <div class="classification-info">
+                <h4>Propiedades importantes:</h4>
+                <ul>
+                    <li><strong>ℕ ⊂ ℤ:</strong> Todo número natural es entero.</li>
+                    <li><strong>ℤ ⊂ ℚ:</strong> Todo entero puede escribirse como fracción.</li>
+                    <li><strong>ℚ ∪ (ℝ-ℚ) = ℝ:</strong> Los reales son la unión de racionales e irracionales.</li>
+                    <li><strong>ℚ ∩ (ℝ-ℚ) = ∅:</strong> No existen números que sean ambos.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Lista de puntos -->
+        <div class="points-panel">
+            <h3>Puntos en la recta</h3>
+            <div id="pointsList" class="points-list">
+                <div class="empty-state">
+                    <p>Agrega números para ver su clasificación automática aquí.</p>
+                    <small>Los puntos aparecerán ordenados de menor a mayor.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora de distancias -->
+        <div class="distance-calculator">
+            <h3>Calculadora de distancias</h3>
+            <p class="calculator-description">
+                Selecciona dos puntos para calcular la distancia entre ellos en la recta numérica.
+            </p>
+
+            <div class="distance-inputs">
+                <div class="distance-field">
+                    <label>Punto A:</label>
+                    <div class="custom-select" id="pointA-container" data-value="">
+                        <div class="select-selected" id="pointA-selected">Selecciona un punto</div>
+                        <div class="select-items" id="pointA-items"></div>
+                    </div>
+                </div>
+
+                <div class="distance-field">
+                    <label>Punto B:</label>
+                    <div class="custom-select" id="pointB-container" data-value="">
+                        <div class="select-selected" id="pointB-selected">Selecciona un punto</div>
+                        <div class="select-items" id="pointB-items"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="distance-btn" onclick="calculateDistance()">Calcular distancia</button>
+
+            <div id="distanceResult" class="distance-placeholder">
+                Selecciona dos puntos para ver la distancia entre ellos.
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Lógica de la recta numérica -->
+<script src="script.js"></script>
+
+</body>
+</html>

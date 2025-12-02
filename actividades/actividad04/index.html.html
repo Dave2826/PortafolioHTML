@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad 04 - Polar → Exponencial</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+    <div class="container-main">
+        <h1>Conversión de Forma Polar a Exponencial</h1>
+
+        <!-- Datos de portada -->
+        <div class="card">
+            <p><strong>Institución:</strong> Tecnológico de Software</p>
+            <p><strong>Materia:</strong> Fundamentos de Álgebra</p>
+            <p><strong>Actividad:</strong> #4 — Conversión Polar → Exponencial</p>
+            <p><strong>Alumno:</strong> David Morales Guerrero</p>
+            <p><strong>Grupo:</strong> 1-A</p>
+        </div>
+
+        <!-- Entrada -->
+        <div class="card">
+            <h2>Ingresa los datos</h2>
+
+            <label><strong>Módulo (r):</strong></label>
+            <input type="number" id="modulo" placeholder="Ej: 5">
+
+            <label><strong>Ángulo (θ grados):</strong></label>
+            <input type="number" id="angulo" placeholder="Ej: 53">
+
+            <button onclick="convertir()">Convertir</button>
+        </div>
+
+        <!-- Resultado -->
+        <div class="card">
+            <h2>Resultado</h2>
+            <div id="resultado" class="resultado-box"></div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actividad #14 – Calculadora Simbólica</title>
+
+  <style>
+    /* 🌑 Tema oscuro tipo Halloween */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #1a1a1a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      background-color: #242424;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(255, 165, 0, 0.3);
+      border: 2px solid #ffb347;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    h1 {
+      text-align: center;
+      color: #ffa31a;
+      font-size: 1.9em;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .info {
+      background-color: #333;
+      border: 1px solid #ffb347;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 25px;
+      font-size: 0.95rem;
+      color: #ffe7b8;
+    }
+
+    label {
+      font-weight: 600;
+      color: #ffcc66;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ffb347;
+      background-color: #1e1e1e;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      border-color: #ffd166;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ffb347, #ffcc33);
+      color: #1a1a1a;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 25px;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #ffd166, #ffb347);
+      transform: scale(1.02);
+    }
+
+    .resultado {
+      margin-top: 30px;
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #ffcc33;
+      display: none;
+    }
+
+    .resultado p {
+      font-size: 1.05rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .step {
+      background-color: #2a2a2a;
+      border-left: 4px solid #ffcc33;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+      color: #ffdead;
+    }
+
+    footer {
+      text-align: center;
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Calculadora Simbólica de Ecuaciones Lineales</h1>
+    <p>Actividad #14 – Unidad II – Fundamentos de Álgebra</p>
+
+    <div class="info">
+      <strong>Institución:</strong> Tecnológico del Software<br>
+      <strong>Materia:</strong> Fundamentos de Álgebra<br>
+      <strong>Docente:</strong> Jorge Javier Pedroza Romero<br>
+      <strong>Alumno:</strong> David Morales Guerrero<br>
+      <strong>Grupo:</strong> 1A
+    </div>
+
+    <label for="equacion1">Primera ecuación:</label>
+    <input type="text" id="equacion1" placeholder="Ejemplo: 2x + 3y = 8">
+
+    <label for="equacion2">Segunda ecuación:</label>
+    <input type="text" id="equacion2" placeholder="Ejemplo: x - y = 4">
+
+    <button onclick="resolverEcuaciones()">Resolver sistema</button>
+
+    <div id="resultado" class="resultado"></div>
+  </div>
+
+  <footer>© 2025 | David Morales Guerrero – Tecnológico del Software</footer>
+
+  <script>
+    // 🧮 Resolver sistema de ecuaciones lineales por método de determinantes
+    function resolverEcuaciones() {
+      const eq1 = document.getElementById("equacion1").value.trim();
+      const eq2 = document.getElementById("equacion2").value.trim();
+      const salida = document.getElementById("resultado");
+
+      if (!eq1 || !eq2) {
+        salida.style.display = "block";
+        salida.innerHTML = "<p>⚠️ Ingresa ambas ecuaciones correctamente.</p>";
+        return;
+      }
+
+      try {
+        const coef1 = obtenerCoeficientes(eq1);
+        const coef2 = obtenerCoeficientes(eq2);
+
+        // Determinantes
+        const det = coef1.a * coef2.b - coef1.b * coef2.a;
+
+        if (det === 0) {
+          salida.style.display = "block";
+          salida.innerHTML = "<p>❌ El sistema no tiene solución única.</p>";
+          return;
+        }
+
+        const detX = coef1.c * coef2.b - coef1.b * coef2.c;
+        const detY = coef1.a * coef2.c - coef1.c * coef2.a;
+
+        const x = detX / det;
+        const y = detY / det;
+
+        // Mostrar pasos
+        salida.style.display = "block";
+        salida.innerHTML = `
+          <p><strong>Procedimiento paso a paso:</strong></p>
+          <div class="step">Ecuación 1: ${eq1}</div>
+          <div class="step">Ecuación 2: ${eq2}</div>
+          <div class="step">Determinante principal (D): (${coef1.a})(${coef2.b}) - (${coef1.b})(${coef2.a}) = ${det}</div>
+          <div class="step">Determinante Dx: (${coef1.c})(${coef2.b}) - (${coef1.b})(${coef2.c}) = ${detX}</div>
+          <div class="step">Determinante Dy: (${coef1.a})(${coef2.c}) - (${coef1.c})(${coef2.a}) = ${detY}</div>
+          <div class="step">x = Dx / D = ${detX} / ${det} = <strong>${x.toFixed(2)}</strong></div>
+          <div class="step">y = Dy / D = ${detY} / ${det} = <strong>${y.toFixed(2)}</strong></div>
+          <p><strong>✅ Resultado final:</strong></p>
+          <p>x = ${x.toFixed(2)}</p>
+          <p>y = ${y.toFixed(2)}</p>
+        `;
+      } catch (error) {
+        salida.style.display = "block";
+        salida.innerHTML = `<p>❌ Error: ${error.message}</p>`;
+      }
+    }
+
+    // 📘 Extraer coeficientes de la ecuación en formato ax + by = c
+    function obtenerCoeficientes(eq) {
+      eq = eq.replace(/\s+/g, "");
+      const match = eq.match(/^([+-]?\d*)x([+-]?\d*)y=([+-]?\d+)$/i);
+
+      if (!match) throw new Error("Formato de ecuación inválido. Usa el formato ax + by = c");
+
+      let a = parseFloat(match[1]) || (match[1] === "-" ? -1 : 1);
+      let b = parseFloat(match[2]) || (match[2] === "-" ? -1 : 1);
+      let c = parseFloat(match[3]);
+
+      return { a, b, c };
+    }
+  </script>
+</body>
+</html>

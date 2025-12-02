@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad 02 - Recta Numérica</title>
+
+    <!-- 🔗 CONECTAR EL CSS GLOBAL DEL PORTAFOLIO -->
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Actividad 02 — Visualizador de la Recta Numérica</h1>
+
+        <section class="cover">
+            <ul class="meta">
+                <li><strong>Institución:</strong> Tecnológico de Software</li>
+                <li><strong>Materia:</strong> Fundamentos de Álgebra</li>
+                <li><strong>Docente:</strong> Javier Pedrozo</li>
+                <li><strong>Alumno:</strong> David Morales Guerrero</li>
+                <li><strong>Grupo:</strong> 1-A</li>
+            </ul>
+        </section>
+
+        <!-- Aquí empieza la app -->
+        <section id="app">
+            <h2>Recta Numérica Interactiva</h2>
+            <p>Ingresa valores para clasificarlos y verlos en la recta numérica.</p>
+
+            <div class="controls">
+                <label>Valor del número:</label>
+                <input type="text" id="numberInput" placeholder="Ej: √2, 2*π, 1/3">
+                <button onclick="addNumber()">Agregar</button>
+                <button onclick="clearAll()">Limpiar</button>
+
+                <h3>Números rápidos:</h3>
+                <button onclick="addPresetNumber('π')">π</button>
+                <button onclick="addPresetNumber('e')">e</button>
+                <button onclick="addPresetNumber('√2')">√2</button>
+                <button onclick="addPresetNumber('1/3')">1/3</button>
+            </div>
+
+            <div class="number-line-container">
+                <div id="numberLine" class="number-line"></div>
+            </div>
+
+            <h3>Puntos añadidos</h3>
+            <div id="pointsList" class="panel"></div>
+
+            <h3>Distancia entre puntos</h3>
+            <div class="distance-box">
+                <label>Punto A:</label>
+                <select id="pointA"></select>
+
+                <label>Punto B:</label>
+                <select id="pointB"></select>
+
+                <button onclick="calculateDistance()">Calcular distancia</button>
+
+                <div id="distanceResult" class="result-box"></div>
+            </div>
+
+        </section>
+
+        <!-- Footer bonito -->
+        <footer>
+            <p>© 2025 • David Morales Guerrero • Actividad 02 • Fundamentos de Álgebra</p>
+        </footer>
+    </div>
+
+    <!-- 🔗 CONECTAR EL JS -->
+    <script src="script.js"></script>
+</body>
+</html>
